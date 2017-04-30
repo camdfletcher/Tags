@@ -17,9 +17,12 @@ public class PlayerJoin implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        // Load the TagHolder data for the player
-        Tags.get().getDataStrategy().loadTagData(player.getUniqueId());
+        // Check and see if the player is cached already
+        if (Tags.get().getTagHolder(player.getUniqueId()) == null) {
 
+            // Load the TagHolder data for the player
+            Tags.get().getDataStrategy().loadTagData(player.getUniqueId());
+        }
     }
 
 }

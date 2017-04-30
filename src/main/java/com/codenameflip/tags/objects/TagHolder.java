@@ -1,6 +1,7 @@
 package com.codenameflip.tags.objects;
 
 import com.codenameflip.tags.Tags;
+import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -20,7 +21,7 @@ public class TagHolder {
         this.uuid = uuid;
     }
 
-    private List<Tag> tags;
+    private List<Tag> tags = Lists.newArrayList();
     private Tag selectedTag;
 
     public UUID getUuid() {
@@ -119,15 +120,18 @@ public class TagHolder {
      * @return The formatted string
      */
     public String getFormattedTags() {
-        StringBuilder result = new StringBuilder();
+        if (tags.size() > 0) {
+            StringBuilder result = new StringBuilder();
 
-        for (Tag tag : getTags()) {
-            result.append(tag.getIdentifier()).append(":");
-        }
+            for (Tag tag : getTags()) {
+                result.append(tag.getIdentifier()).append(":");
+            }
 
-        result.substring(0, result.length() -1); // Hacky work around to removing the last character from the string.
+            result.substring(0, result.length() -1); // Hacky work around to removing the last character from the string.
 
-        return result.toString();
+            return result.toString();
+        } else
+            return "none";
     }
 
 }

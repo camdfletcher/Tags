@@ -1,6 +1,7 @@
 package com.codenameflip.tags;
 
 import com.codenameflip.tags.commands.CmdTags;
+import com.codenameflip.tags.commands.CmdTagsDebug;
 import com.codenameflip.tags.data.DataStrategy;
 import com.codenameflip.tags.data.MongoDataStrategy;
 import com.codenameflip.tags.listeners.PlayerJoin;
@@ -42,14 +43,16 @@ public final class Tags extends JavaPlugin {
             this.dataStrategy = new MongoDataStrategy(getConfig());
 
         dataStrategy.connect();
+
+        // Initialize the scoreboard before the tags, so that when the Tag instances get created they can reference the board
+        tagScoreboard = getServer().getScoreboardManager().getNewScoreboard();
+
         dataStrategy.loadTags();
 
         // If the server has not been populated with proper tag data then register them here.
-        if (tagSet.isEmpty())
+        if (tagSet.size() == 0) {
             registerDefaultTags();
-
-        // Initialize the scoreboard
-        tagScoreboard = getServer().getScoreboardManager().getNewScoreboard();
+        }
 
         // Register commands and listeners
         PluginManager pm = Bukkit.getPluginManager();
@@ -58,6 +61,7 @@ public final class Tags extends JavaPlugin {
         CommandHandler commandHandler = new CommandHandler(this);
         commandHandler.message(TAG + ChatColor.RED + "You do not have permission to execute this command");
         commandHandler.addCommand(new CmdTags(commandHandler, "tags.cmd", "tags"));
+        commandHandler.addCommand(new CmdTagsDebug(commandHandler, "tags.cmd.debug", "tagsDebug", "tdebug"));
     }
 
     @Override
@@ -81,7 +85,7 @@ public final class Tags extends JavaPlugin {
         Tag heart = new Tag("heart", "&c[♥]", false);
         registerTag(heart);
 
-        Tag codenameflip = new Tag("cnamefliip", "&6[CODE]", true);
+        Tag codenameflip = new Tag("cnameflip", "&6[CODE]", true);
         registerTag(codenameflip);
     }
 
@@ -123,6 +127,8 @@ public final class Tags extends JavaPlugin {
         dataStrategy.saveTagData(tagHolder);
 
         System.out.println("Tag Data> Registered new tag holder (" + tagHolder.getUuid() + ")...");
+
+        getTagHolderSet().forEach(System.out::println);
     }
 
     /**

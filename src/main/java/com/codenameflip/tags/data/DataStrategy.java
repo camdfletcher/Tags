@@ -2,6 +2,7 @@ package com.codenameflip.tags.data;
 
 import com.codenameflip.tags.objects.Tag;
 import com.codenameflip.tags.objects.TagHolder;
+import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
@@ -34,5 +35,7 @@ public abstract class DataStrategy {
     public abstract void saveTagData(TagHolder tagHolder);
     public abstract void deleteTagData(UUID uuid);
     public abstract void deleteTagData(TagHolder tagHolder);
+
+    public abstract void dumpData(Player player);
 
 }

@@ -10,7 +10,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.inventivetalent.menubuilder.inventory.InventoryMenuBuilder;
 
@@ -33,65 +32,74 @@ public class CmdTags extends Command {
     }
 
     private InventoryMenuBuilder constructGUI(Player player) {
-        InventoryMenuBuilder inv = new InventoryMenuBuilder();
         TagHolder tagHolder = Tags.get().getTagHolder(player.getUniqueId());
 
-        inv.withType(InventoryType.CHEST);
-        inv.withTitle("&8Select a tag...");
-        inv.withSize((int) Math.ceil(tagHolder.getTags().size() / 9) + 9); // Add an additional row for inventory options
+        int size = tagHolder.getTags() != null && tagHolder.getTags().size() > 0 ? (int) Math.ceil(tagHolder.getTags().size() / 9) : 9;
+        InventoryMenuBuilder inv = new InventoryMenuBuilder(size, "Select a tag...");
 
-        // For each tag in the player's storage, add an item to the inventory
-        for (int i = 0; i < tagHolder.getTags().size(); i++) {
-            Tag tag = tagHolder.getTags().get(i);
+        if (tagHolder.getTags().size() > 0) {
+            // For each tag in the player's storage, add an item to the inventory
+            for (int i = 0; i < tagHolder.getTags().size(); i++) {
+                Tag tag = tagHolder.getTags().get(i);
 
-            ItemStackBuilder itemStackBuilder = new ItemStackBuilder(Material.NAME_TAG)
-                    .withName(tag.getDisplayName() + " " + tag.getIdentifier() + " &6&lTag");
+                ItemStackBuilder itemStackBuilder = new ItemStackBuilder(Material.NAME_TAG)
+                        .withName(tag.getDisplayName() + " " + tag.getIdentifier() + " &6&lTag");
 
-            if (tag.isExclusive())
-                itemStackBuilder
-                        .withGlow()
-                        .withLore("&b&oExclusive Tag");
-            else
-                itemStackBuilder
-                        .withLore("&8Common Tag");
+                if (tag.isExclusive())
+                    itemStackBuilder
+                            .withGlow()
+                            .withLore("&b&oExclusive Tag");
+                else
+                    itemStackBuilder
+                            .withLore("&8Common Tag");
 
-            if (tagHolder.getSelectedTag().equals(tag))
-                itemStackBuilder.withGlow();
+                if (tagHolder.getSelectedTag().equals(tag))
+                    itemStackBuilder.withGlow();
 
-            itemStackBuilder.withLore(" ");
-            itemStackBuilder.withLore("&fStatus " + (tagHolder.getSelectedTag().equals(tag) ? "&aSelected" : "&cNot selected"));
-            itemStackBuilder.withLore(" ");
-            itemStackBuilder.withLore("&6&lRight Click &fto &aSelect Tag");
+                itemStackBuilder.withLore(" ");
+                itemStackBuilder.withLore("&fStatus " + (tagHolder.getSelectedTag().equals(tag) ? "&aSelected" : "&cNot selected"));
+                itemStackBuilder.withLore(" ");
+                itemStackBuilder.withLore("&6&lRight Click &fto &aSelect Tag");
 
-            inv.withItem(i, itemStackBuilder.build(), (clicker, clickType, itemStack) -> {
-                if (tagHolder.getSelectedTag().equals(tag)) {
-                    clicker.sendMessage(ChatColor.RED + "You already have this tag selected!");
-                    return;
-                }
+                inv.withItem(i, itemStackBuilder.build(), (clicker, clickType, itemStack) -> {
+                    if (tagHolder.getSelectedTag().equals(tag)) {
+                        clicker.sendMessage(ChatColor.RED + "You already have this tag selected!");
+                        return;
+                    }
 
-                tagHolder.selectTag(tag);
-                clicker.sendMessage(Tags.TAG + "You selected the " + tag.getDisplayName() + " " + tag.getIdentifier() + " " + ChatColor.GOLD + " Tag");
+                    tagHolder.selectTag(tag);
+                    clicker.sendMessage(Tags.TAG + "You selected the " + tag.getDisplayName() + " " + tag.getIdentifier() + " " + ChatColor.GOLD + " Tag");
 
-                // Update the GUI
-                constructGUI(player).show(player);
-            }, ClickType.RIGHT);
-        }
-
-        ItemStack resetItem = new ItemStackBuilder(Material.TNT)
-                .withName("&c&lRESET TAG")
-                .withLore("&7De-selects the currently selected tag")
-                .build();
-
-        inv.withItem(inv.getInventory().getSize() - 1, resetItem, (clicker, clickType, itemStack) -> {
-            if (tagHolder.getSelectedTag() != null) {
-                tagHolder.selectTag(null);
-
-                player.sendMessage(ChatColor.RED + "De-selected all tags.");
-
-                player.closeInventory();
-                inv.dispose();
+                    // Update the GUI
+                    constructGUI(player).show(player);
+                }, ClickType.RIGHT);
             }
-        }, ClickType.LEFT, ClickType.RIGHT);
+
+            ItemStack resetItem = new ItemStackBuilder(Material.TNT)
+                    .withName("&c&lRESET TAG")
+                    .withLore("&7De-selects the currently selected tag")
+                    .build();
+
+            inv.withItem(inv.getInventory().getSize() - 1, resetItem, (clicker, clickType, itemStack) -> {
+                if (tagHolder.getSelectedTag() != null) {
+                    tagHolder.selectTag(null);
+
+                    player.sendMessage(ChatColor.RED + "De-selected all tags.");
+
+                    player.closeInventory();
+                    inv.dispose();
+                }
+            }, ClickType.LEFT, ClickType.RIGHT);
+        } else {
+            for (int i = 0; i < 9; i++) {
+                inv.withItem(i, new ItemStackBuilder(Material.REDSTONE_BLOCK).withName("&c&lYou do not have any tags :(").withLore("&7Purchase some tags on the store to fill up this inventory!").build(), (player1, clickType, itemStack) -> {
+                    player1.closeInventory();
+                    inv.dispose();
+                }, ClickType.RIGHT, ClickType.LEFT, ClickType.SHIFT_RIGHT, ClickType.SHIFT_LEFT, ClickType.DROP);
+            }
+
+            return inv;
+        }
 
         return inv;
     }

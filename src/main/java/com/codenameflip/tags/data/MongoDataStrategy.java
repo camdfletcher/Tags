@@ -11,6 +11,7 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
 import java.util.Collections;
 import java.util.UUID;
@@ -28,15 +29,20 @@ public class MongoDataStrategy extends DataStrategy {
         super("MongoDB");
 
         this.config = config;
+        this.host = config.getString("connection-details.host");
+        this.port = config.getString("connection-details.port");
+        this.user = config.getString("connection-details.user");
+        this.pass = config.getString("connection-details.pass");
+        this.database = config.getString("connection-details.database");
 
         System.out.println("Storage> New data strategy recognized (" + getIdentifier() + ")...");
     }
 
-    private String host = getConfig().getString("connection-details.host");
-    private String port = getConfig().getString("connection-details.port");
-    private String user = getConfig().getString("connection-details.user");
-    private String pass = getConfig().getString("connection-details.pass");
-    private String database = getConfig().getString("connection-details.database");
+    private String host;
+    private String port;
+    private String user;
+    private String pass;
+    private String database;
 
     private MongoClient connection;
 
@@ -83,7 +89,9 @@ public class MongoDataStrategy extends DataStrategy {
                 Document document = cursor.next();
 
                 Tag tag = new Tag(document.getString("identifier"), document.getString("displayName"), document.getBoolean("exclusive"));
-                Tags.get().registerTag(tag);
+                Tags.get().getTagSet().add(tag);
+
+                System.out.println("Tags> Loaded tag from mongo (" + tag.getIdentifier() + ")");
             }
         }
     }
@@ -92,7 +100,6 @@ public class MongoDataStrategy extends DataStrategy {
     public void saveTag(Tag tag) {
         // Insert the updated document in the collection
         Document tagDocument = new Document("identifier", tag.getIdentifier());
-        tagDocument.append("identifier", tag.getIdentifier()); // TODO: Make sure this doesn't duplicate
         tagDocument.append("displayName", tag.getDisplayName());
         tagDocument.append("exclusive", tag.isExclusive());
 
@@ -108,23 +115,26 @@ public class MongoDataStrategy extends DataStrategy {
     public void loadTagData(UUID uuid) {
         Document targetDocument = getCollection("tagData").find(new Document("uuid", uuid.toString())).first();
 
+        System.out.println(targetDocument);
+
         // If the player does not exist then generate new data and save it
         if (targetDocument == null) {
             TagHolder newTagHolder = new TagHolder(uuid);
 
             Tags.get().registerTagHolder(newTagHolder);
-            saveTagData(newTagHolder);
         } else {
             TagHolder tagHolder = new TagHolder(uuid);
 
-            // Loop through the split version of the tags string
-            String[] ownedTags = targetDocument.getString("tags").split(":");
+            if (!targetDocument.getString("tags").equalsIgnoreCase("none")) {
+                // Loop through the split version of the tags string
+                String[] ownedTags = targetDocument.getString("tags").split(":");
 
-            for (String ownedTag : ownedTags) {
-                Tag tag = Tags.get().getTag(ownedTag);
+                for (String ownedTag : ownedTags) {
+                    Tag tag = Tags.get().getTag(ownedTag);
 
-                if (tag != null)
-                    tagHolder.getTags().add(tag);
+                    if (tag != null)
+                        tagHolder.getTags().add(tag);
+                }
             }
 
             // Select the player's tag
@@ -134,15 +144,22 @@ public class MongoDataStrategy extends DataStrategy {
                 tagHolder.selectTag(selectedTag);
             else
                 tagHolder.setSelectedTag(null);
+
+            Tags.get().getTagHolderSet().add(tagHolder);
+            System.out.println("Tags> Loaded tag holder from mongo (" + tagHolder.getUuid() + ")");
         }
     }
 
     @Override
     public void saveTagData(TagHolder tagHolder) {
         // Insert the updated document in the collection
-        Document tagHolderDocument = new Document("uuid", tagHolder.getUuid());
+        Document tagHolderDocument = new Document("uuid", tagHolder.getUuid().toString());
         tagHolderDocument.append("tags", tagHolder.getFormattedTags());
-        tagHolderDocument.append("selected", tagHolder.getSelectedTag().getIdentifier());
+
+        if (tagHolder.getSelectedTag() == null)
+            tagHolderDocument.append("selected", "none");
+        else
+            tagHolderDocument.append("selected", tagHolder.getSelectedTag().getIdentifier());
 
         getCollection("tagData").insertOne(tagHolderDocument);
     }
@@ -156,6 +173,12 @@ public class MongoDataStrategy extends DataStrategy {
     @Override
     public void deleteTagData(TagHolder tagHolder) {
         deleteTagData(tagHolder.getUuid());
+    }
+
+    @Override
+    public void dumpData(Player player) {
+        player.sendMessage("'tags' Collection Document Count: " + getCollection("tags").count());
+        player.sendMessage("'tagData' Collection Document Count: " + getCollection("tagData").count());
     }
 
     private MongoCollection<Document> getCollection(String name) {

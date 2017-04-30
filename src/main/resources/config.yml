@@ -1,0 +1,12 @@
+## Valid 'data-strategy' values include:
+## 'mongodb'
+data-strategy: "mongodb"
+
+connection-details:
+  host: "null"
+  port: "null"
+  user: "null"
+  pass: "null"
+  database: "null"
+
+tags-in-chat: true

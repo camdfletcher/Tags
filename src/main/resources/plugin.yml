@@ -1,0 +1,5 @@
+name: Tags
+version: ${project.version}
+main: com.codenameflip.tags.Tags
+authors: [codenameflip]
+description: A simple plugin that appends a premade tag to a player's name

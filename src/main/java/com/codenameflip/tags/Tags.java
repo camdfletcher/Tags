@@ -1,12 +1,15 @@
 package com.codenameflip.tags;
 
+import com.codenameflip.tags.commands.CmdTags;
 import com.codenameflip.tags.data.DataStrategy;
 import com.codenameflip.tags.data.MongoDataStrategy;
 import com.codenameflip.tags.listeners.PlayerJoin;
 import com.codenameflip.tags.objects.Tag;
 import com.codenameflip.tags.objects.TagHolder;
 import com.google.common.collect.Sets;
+import com.simplexitymc.command.api.CommandHandler;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Scoreboard;
@@ -17,14 +20,13 @@ import java.util.UUID;
 
 public final class Tags extends JavaPlugin {
 
+    public static final String TAG = "" + ChatColor.GOLD + "[Tags] " + ChatColor.WHITE;
     private static Tags instance;
 
     private DataStrategy dataStrategy;
     private Set<Tag> tagSet = Sets.newHashSet();
     private Set<TagHolder> tagHolderSet = Sets.newHashSet();
     private Scoreboard tagScoreboard;
-
-    private boolean tagsInChat = true;
 
     @Override
     public void onEnable() {
@@ -42,13 +44,20 @@ public final class Tags extends JavaPlugin {
         dataStrategy.connect();
         dataStrategy.loadTags();
 
+        // If the server has not been populated with proper tag data then register them here.
+        if (tagSet.isEmpty())
+            registerDefaultTags();
+
         // Initialize the scoreboard
         tagScoreboard = getServer().getScoreboardManager().getNewScoreboard();
 
-        tagsInChat = getConfig().getBoolean("tags-in-chat");
-
+        // Register commands and listeners
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new PlayerJoin(), this);
+
+        CommandHandler commandHandler = new CommandHandler(this);
+        commandHandler.message(TAG + ChatColor.RED + "You do not have permission to execute this command");
+        commandHandler.addCommand(new CmdTags(commandHandler, "tags.cmd", "tags"));
     }
 
     @Override
@@ -58,12 +67,6 @@ public final class Tags extends JavaPlugin {
 
         instance = null;
     }
-
-    // Tags:
-    // ☼
-    // ☆
-    // $
-    // ♥
 
     private void registerDefaultTags() {
         Tag sun = new Tag("sun", "&6[☼]", false);
@@ -77,6 +80,9 @@ public final class Tags extends JavaPlugin {
 
         Tag heart = new Tag("heart", "&c[♥]", false);
         registerTag(heart);
+
+        Tag codenameflip = new Tag("cnamefliip", "&6[CODE]", true);
+        registerTag(codenameflip);
     }
 
     public static Tags get() {
@@ -85,10 +91,6 @@ public final class Tags extends JavaPlugin {
 
     public DataStrategy getDataStrategy() {
         return dataStrategy;
-    }
-
-    public boolean isTagsInChat() {
-        return tagsInChat;
     }
 
     public Set<Tag> getTagSet() {

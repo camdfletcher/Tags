@@ -132,6 +132,8 @@ public class MongoDataStrategy extends DataStrategy {
 
             if (selectedTag != null)
                 tagHolder.selectTag(selectedTag);
+            else
+                tagHolder.setSelectedTag(null);
         }
     }
 

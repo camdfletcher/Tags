@@ -35,6 +35,10 @@ public class TagHolder {
         return selectedTag;
     }
 
+    public void setSelectedTag(Tag selectedTag) {
+        this.selectedTag = selectedTag;
+    }
+
     /**
      * Adds a specific Tag from a player's storage
      * @param tag The Tag you would like to add
@@ -76,14 +80,32 @@ public class TagHolder {
         Player player = Bukkit.getPlayer(uuid);
 
         if (player != null) {
+
+            // If no tag is specified then assume that no tag should be shown (tags were reset)
+            if (tag == null) {
+                // Remove them from the scoreboard
+                selectedTag.getScoreboardTeam().removeEntry(uuid.toString());
+
+                // Reset their name in tab list
+                player.setPlayerListName(player.getDisplayName());
+
+                // Set the variable
+                selectedTag = null;
+
+                // Update the database
+                Tags.get().getDataStrategy().saveTagData(this);
+
+                return;
+            }
+
             // Set the player's name above their head
             tag.getScoreboardTeam().addEntry(uuid.toString());
 
             // Set the player's name on the tab list
             player.setPlayerListName(tag.getDisplayName() + " " + player.getDisplayName());
-
-            if (Tags.get().isTagsInChat())
-                player.setDisplayName(tag.getDisplayName() + " " + player.getDisplayName());
+//
+//            if (Tags.get().isTagsInChat())        May re-add at a later point in time
+//                player.setDisplayName(tag.getDisplayName() + " " + player.getDisplayName());
 
             // Set the variable
             selectedTag = tag;

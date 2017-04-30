@@ -24,5 +24,9 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.yaml:snakeyaml:1.15" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.md-5:bungeecord-chat:1.8-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.mongodb:mongo-java-driver:3.5.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.github.outdatedversion:command-handler:2.4.4" level="project" />
+    <orderEntry type="library" name="Maven: org.inventivetalent:menubuilder:1.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.bukkit:craftbukkit:1.9.4-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.inventivetalent:itembuilder:1.0.10" level="project" />
   </component>
 </module>

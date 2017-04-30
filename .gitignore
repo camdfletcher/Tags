@@ -1,0 +1,10 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Generic template
+# IntelliJ
+.idea/
+*.iml
+*/*.iml
+
+# Maven
+target/
+*/target/

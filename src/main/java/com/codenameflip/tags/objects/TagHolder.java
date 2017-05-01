@@ -48,7 +48,7 @@ public class TagHolder {
         if (!tags.contains(tag)) {
             tags.add(tag);
 
-            Tags.get().getDataStrategy().saveTagData(this);
+            Tags.get().getDataStrategy().updateTagData(this);
         }
     }
 
@@ -60,7 +60,7 @@ public class TagHolder {
         if (tags.contains(tag)) {
             tags.remove(tag);
 
-            Tags.get().getDataStrategy().saveTagData(this);
+            Tags.get().getDataStrategy().updateTagData(this);
         }
     }
 
@@ -70,7 +70,7 @@ public class TagHolder {
     public void resetTags() {
         tags.clear();
 
-        Tags.get().getDataStrategy().saveTagData(this);
+        Tags.get().getDataStrategy().updateTagData(this);
     }
 
     /**
@@ -94,7 +94,7 @@ public class TagHolder {
                 selectedTag = null;
 
                 // Update the database
-                Tags.get().getDataStrategy().saveTagData(this);
+                Tags.get().getDataStrategy().updateTagData(this);
 
                 return;
             }
@@ -111,7 +111,7 @@ public class TagHolder {
             // Set the variable
             selectedTag = tag;
 
-            Tags.get().getDataStrategy().saveTagData(this);
+            Tags.get().getDataStrategy().updateTagData(this);
         }
     }
 
@@ -127,9 +127,8 @@ public class TagHolder {
                 result.append(tag.getIdentifier()).append(":");
             }
 
-            result.substring(0, result.length() -1); // Hacky work around to removing the last character from the string.
-
-            return result.toString();
+            // Hacky work around to removing the last character from the string.
+            return result.toString().substring(0, result.toString().length() - 1);
         } else
             return "none";
     }

@@ -34,8 +34,11 @@ public class CmdTags extends Command {
     private InventoryMenuBuilder constructGUI(Player player) {
         TagHolder tagHolder = Tags.get().getTagHolder(player.getUniqueId());
 
-        int size = tagHolder.getTags() != null && tagHolder.getTags().size() > 0 ? (int) Math.ceil(tagHolder.getTags().size() / 9) : 9;
+        int size = tagHolder.getTags() != null && tagHolder.getTags().size() > 0 ? ((tagHolder.getTags().size() / 9) + 1) * 9 : 9;
         InventoryMenuBuilder inv = new InventoryMenuBuilder(size, "Select a tag...");
+
+        System.out.println(size);
+        System.out.println(inv);
 
         if (tagHolder.getTags().size() > 0) {
             // For each tag in the player's storage, add an item to the inventory
@@ -43,7 +46,7 @@ public class CmdTags extends Command {
                 Tag tag = tagHolder.getTags().get(i);
 
                 ItemStackBuilder itemStackBuilder = new ItemStackBuilder(Material.NAME_TAG)
-                        .withName(tag.getDisplayName() + " " + tag.getIdentifier() + " &6&lTag");
+                        .withName(tag.getDisplayName() + " " + tag.getIdentifier().toUpperCase()+ " &6&lTag");
 
                 if (tag.isExclusive())
                     itemStackBuilder
@@ -53,22 +56,22 @@ public class CmdTags extends Command {
                     itemStackBuilder
                             .withLore("&8Common Tag");
 
-                if (tagHolder.getSelectedTag().equals(tag))
+                if (tagHolder.getSelectedTag() != null && tagHolder.getSelectedTag().equals(tag))
                     itemStackBuilder.withGlow();
 
                 itemStackBuilder.withLore(" ");
-                itemStackBuilder.withLore("&fStatus " + (tagHolder.getSelectedTag().equals(tag) ? "&aSelected" : "&cNot selected"));
+                itemStackBuilder.withLore("&fStatus " + (tagHolder.getSelectedTag() != null && tagHolder.getSelectedTag().equals(tag) ? "&aSelected" : "&cNot selected"));
                 itemStackBuilder.withLore(" ");
                 itemStackBuilder.withLore("&6&lRight Click &fto &aSelect Tag");
 
                 inv.withItem(i, itemStackBuilder.build(), (clicker, clickType, itemStack) -> {
-                    if (tagHolder.getSelectedTag().equals(tag)) {
+                    if (tagHolder.getSelectedTag() != null && tagHolder.getSelectedTag().equals(tag)) {
                         clicker.sendMessage(ChatColor.RED + "You already have this tag selected!");
                         return;
                     }
 
                     tagHolder.selectTag(tag);
-                    clicker.sendMessage(Tags.TAG + "You selected the " + tag.getDisplayName() + " " + tag.getIdentifier() + " " + ChatColor.GOLD + " Tag");
+                    clicker.sendMessage(Tags.TAG + "You selected the " + tag.getDisplayName() + " " + tag.getIdentifier().toUpperCase() + " " + ChatColor.GOLD + "Tag");
 
                     // Update the GUI
                     constructGUI(player).show(player);
@@ -90,9 +93,22 @@ public class CmdTags extends Command {
                     inv.dispose();
                 }
             }, ClickType.LEFT, ClickType.RIGHT);
+
+            return inv;
         } else {
+            System.out.println(inv);
+
             for (int i = 0; i < 9; i++) {
-                inv.withItem(i, new ItemStackBuilder(Material.REDSTONE_BLOCK).withName("&c&lYou do not have any tags :(").withLore("&7Purchase some tags on the store to fill up this inventory!").build(), (player1, clickType, itemStack) -> {
+                inv
+                        .withItem(
+                        i,
+                        new ItemStackBuilder(Material.REDSTONE_BLOCK)
+                                .withName("&c&lYou do not have any tags :(")
+                                .withLore("&7Purchase some tags on the store to fill up this inventory!")
+                                .build(),
+                        (player1,
+                         clickType,
+                         itemStack) -> {
                     player1.closeInventory();
                     inv.dispose();
                 }, ClickType.RIGHT, ClickType.LEFT, ClickType.SHIFT_RIGHT, ClickType.SHIFT_LEFT, ClickType.DROP);
@@ -100,8 +116,6 @@ public class CmdTags extends Command {
 
             return inv;
         }
-
-        return inv;
     }
 
 }

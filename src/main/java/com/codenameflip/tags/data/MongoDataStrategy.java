@@ -165,6 +165,20 @@ public class MongoDataStrategy extends DataStrategy {
     }
 
     @Override
+    public void updateTagData(TagHolder tagHolder) {
+        // Insert the updated document in the collection
+        Document tagHolderDocument = new Document("uuid", tagHolder.getUuid().toString());
+        tagHolderDocument.append("tags", tagHolder.getFormattedTags());
+
+        if (tagHolder.getSelectedTag() == null)
+            tagHolderDocument.append("selected", "none");
+        else
+            tagHolderDocument.append("selected", tagHolder.getSelectedTag().getIdentifier());
+
+        getCollection("tagData").findOneAndReplace(new Document("uuid", tagHolder.getUuid().toString()), tagHolderDocument);
+    }
+
+    @Override
     public void deleteTagData(UUID uuid) {
         getCollection("tagData").findOneAndDelete(Filters.eq("uuid", uuid.toString()));
 

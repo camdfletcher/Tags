@@ -33,6 +33,7 @@ public abstract class DataStrategy {
 
     public abstract void loadTagData(UUID uuid);
     public abstract void saveTagData(TagHolder tagHolder);
+    public abstract void updateTagData(TagHolder tagHolder);
     public abstract void deleteTagData(UUID uuid);
     public abstract void deleteTagData(TagHolder tagHolder);
 

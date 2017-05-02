@@ -49,12 +49,9 @@ public class CmdTags extends Command {
                         .withName(tag.getDisplayName() + " " + tag.getIdentifier().toUpperCase()+ " &6&lTag");
 
                 if (tag.isExclusive())
-                    itemStackBuilder
-                            .withGlow()
-                            .withLore("&b&oExclusive Tag");
+                    itemStackBuilder.withType(Material.DIAMOND).withGlow().withLore("&b&oExclusive Tag");
                 else
-                    itemStackBuilder
-                            .withLore("&8Common Tag");
+                    itemStackBuilder.withLore("&8Common Tag");
 
                 if (tagHolder.getSelectedTag() != null && tagHolder.getSelectedTag().equals(tag))
                     itemStackBuilder.withGlow();
@@ -98,19 +95,15 @@ public class CmdTags extends Command {
         } else {
             System.out.println(inv);
 
-            for (int i = 0; i < 9; i++) {
-                inv
-                        .withItem(
-                        i,
-                        new ItemStackBuilder(Material.REDSTONE_BLOCK)
-                                .withName("&c&lYou do not have any tags :(")
-                                .withLore("&7Purchase some tags on the store to fill up this inventory!")
-                                .build(),
-                        (player1,
-                         clickType,
-                         itemStack) -> {
-                    player1.closeInventory();
-                    inv.dispose();
+            for (int i = 0; i < 9; i++) {inv.withItem(i, new ItemStackBuilder(Material.REDSTONE_BLOCK)
+                            .withName("&c&lYou do not have any tags :(")
+                            .withLore("&7Purchase some tags on the store to fill up this inventory!")
+                            .build(),
+                    (player1, clickType, itemStack) -> {
+
+                player1.closeInventory();
+                inv.dispose();
+
                 }, ClickType.RIGHT, ClickType.LEFT, ClickType.SHIFT_RIGHT, ClickType.SHIFT_LEFT, ClickType.DROP);
             }
 

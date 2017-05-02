@@ -62,6 +62,13 @@ public final class Tags extends JavaPlugin {
         commandHandler.message(TAG + ChatColor.RED + "You do not have permission to execute this command");
         commandHandler.addCommand(new CmdTags(commandHandler, "tags.cmd", "tags"));
         commandHandler.addCommand(new CmdTagsDebug(commandHandler, "tags.cmd.debug", "tagsDebug", "tdebug"));
+
+        // Handle reloads safely (if any occur)
+        Bukkit.getOnlinePlayers().forEach(player -> {
+
+            // Load the TagHolder data for the player
+            Tags.get().getDataStrategy().loadTagData(player.getUniqueId());
+        });
     }
 
     @Override

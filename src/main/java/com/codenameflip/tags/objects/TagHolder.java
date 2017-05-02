@@ -85,7 +85,7 @@ public class TagHolder {
             // If no tag is specified then assume that no tag should be shown (tags were reset)
             if (tag == null) {
                 // Remove them from the scoreboard
-                selectedTag.getScoreboardTeam().removeEntry(uuid.toString());
+                selectedTag.getScoreboardTeam().removePlayer(player);
 
                 // Reset their name in tab list
                 player.setPlayerListName(player.getDisplayName());
@@ -99,8 +99,14 @@ public class TagHolder {
                 return;
             }
 
+            System.out.println(tag.getScoreboardTeam());
+
             // Set the player's name above their head
-            tag.getScoreboardTeam().addEntry(uuid.toString());
+            tag.getScoreboardTeam().addPlayer(player);
+
+            Bukkit.getOnlinePlayers().forEach(online -> {
+                online.setScoreboard(Tags.get().getTagScoreboard());
+            });
 
             // Set the player's name on the tab list
             player.setPlayerListName(tag.getDisplayName() + " " + player.getDisplayName());

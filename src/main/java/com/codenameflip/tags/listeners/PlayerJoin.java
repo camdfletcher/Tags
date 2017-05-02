@@ -1,6 +1,7 @@
 package com.codenameflip.tags.listeners;
 
 import com.codenameflip.tags.Tags;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,6 +17,10 @@ public class PlayerJoin implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+
+        Bukkit.getOnlinePlayers().forEach(online -> {
+            online.setScoreboard(Tags.get().getTagScoreboard());
+        });
 
         // Check and see if the player is cached already
         if (Tags.get().getTagHolder(player.getUniqueId()) == null) {

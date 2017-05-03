@@ -81,6 +81,9 @@ public final class Tags extends JavaPlugin {
         instance = null;
     }
 
+    /**
+     * Registers all default tags in the database
+     */
     private void registerDefaultTags() {
         Tag sun = new Tag("sun", "&6[☼]", false);
         registerTag(sun);
@@ -93,9 +96,6 @@ public final class Tags extends JavaPlugin {
 
         Tag heart = new Tag("heart", "&c[♥]", false);
         registerTag(heart);
-
-        Tag codenameflip = new Tag("cnameflip", "&6[CODE]", true);
-        registerTag(codenameflip);
     }
 
     public static Tags get() {

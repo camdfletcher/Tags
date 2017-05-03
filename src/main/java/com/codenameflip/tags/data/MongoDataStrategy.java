@@ -83,6 +83,10 @@ public class MongoDataStrategy extends DataStrategy {
 
     @Override
     public void loadTags() {
+        // Reconnect if needed
+        if (!isAlive())
+            connect();
+
         // Iterate through all documents in the collection and load them (as all of them should be tag objects)
         try (MongoCursor<Document> cursor = getCollection("tags").find().iterator()) {
             while (cursor.hasNext()) {
@@ -98,6 +102,10 @@ public class MongoDataStrategy extends DataStrategy {
 
     @Override
     public void saveTag(Tag tag) {
+        // Reconnect if needed
+        if (!isAlive())
+            connect();
+
         // Insert the updated document in the collection
         Document tagDocument = new Document("identifier", tag.getIdentifier());
         tagDocument.append("displayName", tag.getDisplayName());
@@ -108,11 +116,19 @@ public class MongoDataStrategy extends DataStrategy {
 
     @Override
     public void deleteTag(Tag tag) {
+        // Reconnect if needed
+        if (!isAlive())
+            connect();
+
         getCollection("tags").findOneAndDelete(Filters.eq("identifier", tag.getIdentifier()));
     }
 
     @Override
     public void loadTagData(UUID uuid) {
+        // Reconnect if needed
+        if (!isAlive())
+            connect();
+
         Document targetDocument = getCollection("tagData").find(new Document("uuid", uuid.toString())).first();
 
         // If the player does not exist then generate new data and save it
@@ -150,6 +166,10 @@ public class MongoDataStrategy extends DataStrategy {
 
     @Override
     public void saveTagData(TagHolder tagHolder) {
+        // Reconnect if needed
+        if (!isAlive())
+            connect();
+
         // Insert the updated document in the collection
         Document tagHolderDocument = new Document("uuid", tagHolder.getUuid().toString());
         tagHolderDocument.append("tags", tagHolder.getFormattedTags());
@@ -164,6 +184,10 @@ public class MongoDataStrategy extends DataStrategy {
 
     @Override
     public void updateTagData(TagHolder tagHolder) {
+        // Reconnect if needed
+        if (!isAlive())
+            connect();
+
         // Insert the updated document in the collection
         Document tagHolderDocument = new Document("uuid", tagHolder.getUuid().toString());
         tagHolderDocument.append("tags", tagHolder.getFormattedTags());
@@ -178,17 +202,28 @@ public class MongoDataStrategy extends DataStrategy {
 
     @Override
     public void deleteTagData(UUID uuid) {
-        getCollection("tagData").findOneAndDelete(Filters.eq("uuid", uuid.toString()));
+        // Reconnect if needed
+        if (!isAlive())
+            connect();
 
+        getCollection("tagData").findOneAndDelete(Filters.eq("uuid", uuid.toString()));
     }
 
     @Override
     public void deleteTagData(TagHolder tagHolder) {
+        // Reconnect if needed
+        if (!isAlive())
+            connect();
+
         deleteTagData(tagHolder.getUuid());
     }
 
     @Override
     public void dumpData(Player player) {
+        // Reconnect if needed
+        if (!isAlive())
+            connect();
+
         player.sendMessage("'tags' Collection Document Count: " + getCollection("tags").count());
         player.sendMessage("'tagData' Collection Document Count: " + getCollection("tagData").count());
     }

@@ -37,6 +37,10 @@ public abstract class DataStrategy {
     public abstract void deleteTagData(UUID uuid);
     public abstract void deleteTagData(TagHolder tagHolder);
 
+    /**
+     * A utility method to allow data from the database to be dumped/messaged to a player
+     * @param player The player you would like to send the data to
+     */
     public abstract void dumpData(Player player);
 
 }

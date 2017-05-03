@@ -29,10 +29,14 @@ public class CmdTagAdmin implements CommandExecutor {
                 Stream.of(
                         "" + ChatColor.GOLD + ChatColor.BOLD + "Tags Commands " + ChatColor.GRAY + "(Specify a sub command)",
                         ChatColor.RED + "/tagAdmin " + ChatColor.BOLD + "award " + ChatColor.GRAY + "(player|uuid) (tag)",
-                        ChatColor.RED + "/tagAdmin " + ChatColor.BOLD + "remove " + ChatColor.GRAY + "(player|uuid) (tag)"
+                        ChatColor.RED + "/tagAdmin " + ChatColor.BOLD + "remove " + ChatColor.GRAY + "(player|uuid) (tag)",
+                        ChatColor.RED + "/tagAdmin " + ChatColor.BOLD + "create " + ChatColor.GRAY + "(identifier) (display name) (isExclusive)"
                 ).forEach(sender::sendMessage);
             } else {
                 if (args[0].equalsIgnoreCase("award") && args.length >= 3) {
+                    /*
+                        /tagAdmin award (uuid|player) (tag)
+                     */
                     String target = args[1];
                     Tag targetTag = Tags.get().getTag(args[2]);
 
@@ -60,6 +64,9 @@ public class CmdTagAdmin implements CommandExecutor {
                         awardTag(sender, playerTarget.getUniqueId().toString(), targetTag.getIdentifier());
                     }
                 } else if (args[0].equalsIgnoreCase("remove") && args.length >= 3) {
+                    /*
+                        /tagAdmin remove (uuid|player) (tag)
+                     */
                     String target = args[1];
                     Tag targetTag = Tags.get().getTag(args[2]);
 
@@ -86,6 +93,16 @@ public class CmdTagAdmin implements CommandExecutor {
 
                         removeTag(sender, playerTarget.getUniqueId().toString(), targetTag.getIdentifier());
                     }
+                } else if (args[0].equalsIgnoreCase("create") && args.length >= 4) {
+                    /*
+                        /tagAdmin create (identifier) (display name) (isExclusive)
+                     */
+
+                    String identifier = args[1];
+                    String displayName = args[2];
+                    String isExclusive = args[3];
+
+                    createTag(sender, identifier, displayName, isExclusive);
                 }
             }
         } else {
@@ -95,6 +112,12 @@ public class CmdTagAdmin implements CommandExecutor {
         return false;
     }
 
+    /**
+     * Gives a player a tag
+     * @param sender The sender executing the request
+     * @param uuid The uuid the tag is being given to
+     * @param tag The tag you wish to give to the player
+     */
     private void awardTag(CommandSender sender, String uuid, String tag) {
         Tag targetTag = Tags.get().getTag(tag);
 
@@ -140,6 +163,12 @@ public class CmdTagAdmin implements CommandExecutor {
             }
     }
 
+    /**
+     * Removes a tag from a player's profile
+     * @param sender The sender executing the request
+     * @param uuid The uuid the tag is being removed from
+     * @param tag The tag you wish to remove
+     */
     private void removeTag(CommandSender sender, String uuid, String tag) {
         Tag targetTag = Tags.get().getTag(tag);
 
@@ -192,6 +221,22 @@ public class CmdTagAdmin implements CommandExecutor {
         } catch (IllegalArgumentException e) {
             sender.sendMessage(ChatColor.RED + "Illegal uuid specified.");
         }
+    }
+
+    /**
+     * Creates a tag and adds it to the database
+     * @param sender The sender executing the request
+     * @param identifier The desired identifier
+     * @param display The desired display name
+     * @param exclusive Is the tag an exclusive tag?
+     */
+    private void createTag(CommandSender sender, String identifier, String display, String exclusive) {
+        boolean isExclusive = Boolean.parseBoolean(exclusive);
+
+        Tag tag = new Tag(identifier, display, isExclusive);
+        Tags.get().registerTag(tag);
+
+        sender.sendMessage(ChatColor.GREEN + "Created/registered new tag '" + identifier + "'; it may now be distributed to players.");
     }
 
 }

@@ -59,7 +59,7 @@ public class CmdTagAdmin implements CommandExecutor {
 
                         awardTag(sender, playerTarget.getUniqueId().toString(), targetTag.getIdentifier());
                     }
-                } else if (args[0].equalsIgnoreCase("remove") && args.length >= 2) {
+                } else if (args[0].equalsIgnoreCase("remove") && args.length >= 3) {
                     String target = args[1];
                     Tag targetTag = Tags.get().getTag(args[2]);
 

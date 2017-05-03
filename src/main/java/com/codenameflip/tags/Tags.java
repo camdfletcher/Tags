@@ -136,8 +136,6 @@ public final class Tags extends JavaPlugin {
         dataStrategy.saveTagData(tagHolder);
 
         System.out.println("Tag Data> Registered new tag holder (" + tagHolder.getUuid() + ")...");
-
-        getTagHolderSet().forEach(System.out::println);
     }
 
     /**

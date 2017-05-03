@@ -99,8 +99,6 @@ public class TagHolder {
                 return;
             }
 
-            System.out.println(tag.getScoreboardTeam());
-
             // Set the player's name above their head
             tag.getScoreboardTeam().addPlayer(player);
 

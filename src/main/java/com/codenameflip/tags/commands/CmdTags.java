@@ -37,9 +37,6 @@ public class CmdTags extends Command {
         int size = tagHolder.getTags() != null && tagHolder.getTags().size() > 0 ? ((tagHolder.getTags().size() / 9) + 1) * 9 : 9;
         InventoryMenuBuilder inv = new InventoryMenuBuilder(size, "Select a tag...");
 
-        System.out.println(size);
-        System.out.println(inv);
-
         if (tagHolder.getTags().size() > 0) {
             // For each tag in the player's storage, add an item to the inventory
             for (int i = 0; i < tagHolder.getTags().size(); i++) {
@@ -93,8 +90,6 @@ public class CmdTags extends Command {
 
             return inv;
         } else {
-            System.out.println(inv);
-
             for (int i = 0; i < 9; i++) {inv.withItem(i, new ItemStackBuilder(Material.REDSTONE_BLOCK)
                             .withName("&c&lYou do not have any tags :(")
                             .withLore("&7Purchase some tags on the store to fill up this inventory!")

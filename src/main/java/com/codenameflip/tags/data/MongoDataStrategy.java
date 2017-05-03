@@ -115,8 +115,6 @@ public class MongoDataStrategy extends DataStrategy {
     public void loadTagData(UUID uuid) {
         Document targetDocument = getCollection("tagData").find(new Document("uuid", uuid.toString())).first();
 
-        System.out.println(targetDocument);
-
         // If the player does not exist then generate new data and save it
         if (targetDocument == null) {
             TagHolder newTagHolder = new TagHolder(uuid);

@@ -177,6 +177,11 @@ public class CmdTagAdmin implements CommandExecutor {
                 }
             }
 
+            // If the tag being removed from the player is their current tag, remove it from their selected tags
+            if (targetHolder.getSelectedTag() != null && targetHolder.getSelectedTag().equals(targetTag)) {
+                targetHolder.selectTag(null);
+            }
+
             targetHolder.removeTag(targetTag);
             sender.sendMessage(ChatColor.GREEN + "Removed the '" + tag + "' tag from " + uuid);
 

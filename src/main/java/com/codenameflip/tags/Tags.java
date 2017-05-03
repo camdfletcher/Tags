@@ -1,5 +1,6 @@
 package com.codenameflip.tags;
 
+import com.codenameflip.tags.commands.CmdTagAdmin;
 import com.codenameflip.tags.commands.CmdTags;
 import com.codenameflip.tags.commands.CmdTagsDebug;
 import com.codenameflip.tags.data.DataStrategy;
@@ -62,6 +63,7 @@ public final class Tags extends JavaPlugin {
         commandHandler.message(TAG + ChatColor.RED + "You do not have permission to execute this command");
         commandHandler.addCommand(new CmdTags(commandHandler, "tags.cmd", "tags"));
         commandHandler.addCommand(new CmdTagsDebug(commandHandler, "tags.cmd.debug", "tagsDebug", "tdebug"));
+        getCommand("tagAdmin").setExecutor(new CmdTagAdmin());
 
         // Handle reloads safely (if any occur)
         Bukkit.getOnlinePlayers().forEach(player -> {

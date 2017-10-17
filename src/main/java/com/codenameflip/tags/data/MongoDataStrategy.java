@@ -24,8 +24,15 @@ import java.util.UUID;
 public class MongoDataStrategy extends DataStrategy {
 
     private FileConfiguration config;
+    private String host;
+    private String port;
+    private String user;
+    private String pass;
+    private String database;
+    private MongoClient connection;
 
-    public MongoDataStrategy(FileConfiguration config) {
+    public MongoDataStrategy(FileConfiguration config)
+    {
         super("MongoDB");
 
         this.config = config;
@@ -38,33 +45,32 @@ public class MongoDataStrategy extends DataStrategy {
         System.out.println("Storage> New data strategy recognized (" + getIdentifier() + ")...");
     }
 
-    private String host;
-    private String port;
-    private String user;
-    private String pass;
-    private String database;
-
-    private MongoClient connection;
-
-    public FileConfiguration getConfig() {
+    public FileConfiguration getConfig()
+    {
         return config;
     }
 
     @Override
-    public void connect() {
-        try {
+    public void connect()
+    {
+        try
+        {
             MongoCredential authCredentials = MongoCredential.createCredential(user, database, pass.toCharArray());
             this.connection = new MongoClient(new ServerAddress(host, Integer.parseInt(port)), Collections.singletonList(authCredentials));
 
             System.out.println("Mongo> Connected to host successfully.");
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             System.out.println("Mongo> Error encountered when trying to establish a connection to the database.");
         }
     }
 
     @Override
-    public void disconnect() {
-        if (isAlive()) {
+    public void disconnect()
+    {
+        if (isAlive())
+        {
             connection.close();
 
             System.out.println("Mongo> Disconnected from host successfully");
@@ -72,24 +78,31 @@ public class MongoDataStrategy extends DataStrategy {
     }
 
     @Override
-    public boolean isAlive() {
-        try {
+    public boolean isAlive()
+    {
+        try
+        {
             connection.getAddress();
             return true;
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             return false;
         }
     }
 
     @Override
-    public void loadTags() {
+    public void loadTags()
+    {
         // Reconnect if needed
         if (!isAlive())
             connect();
 
         // Iterate through all documents in the collection and load them (as all of them should be tag objects)
-        try (MongoCursor<Document> cursor = getCollection("tags").find().iterator()) {
-            while (cursor.hasNext()) {
+        try (MongoCursor<Document> cursor = getCollection("tags").find().iterator())
+        {
+            while (cursor.hasNext())
+            {
                 Document document = cursor.next();
 
                 Tag tag = new Tag(document.getString("identifier"), document.getString("displayName"), document.getBoolean("exclusive"));
@@ -101,7 +114,8 @@ public class MongoDataStrategy extends DataStrategy {
     }
 
     @Override
-    public void saveTag(Tag tag) {
+    public void saveTag(Tag tag)
+    {
         // Reconnect if needed
         if (!isAlive())
             connect();
@@ -115,7 +129,8 @@ public class MongoDataStrategy extends DataStrategy {
     }
 
     @Override
-    public void deleteTag(Tag tag) {
+    public void deleteTag(Tag tag)
+    {
         // Reconnect if needed
         if (!isAlive())
             connect();
@@ -124,7 +139,8 @@ public class MongoDataStrategy extends DataStrategy {
     }
 
     @Override
-    public void loadTagData(UUID uuid) {
+    public void loadTagData(UUID uuid)
+    {
         // Reconnect if needed
         if (!isAlive())
             connect();
@@ -132,18 +148,23 @@ public class MongoDataStrategy extends DataStrategy {
         Document targetDocument = getCollection("tagData").find(new Document("uuid", uuid.toString())).first();
 
         // If the player does not exist then generate new data and save it
-        if (targetDocument == null) {
+        if (targetDocument == null)
+        {
             TagHolder newTagHolder = new TagHolder(uuid);
 
             Tags.get().registerTagHolder(newTagHolder);
-        } else {
+        }
+        else
+        {
             TagHolder tagHolder = new TagHolder(uuid);
 
-            if (!targetDocument.getString("tags").equalsIgnoreCase("none")) {
+            if (!targetDocument.getString("tags").equalsIgnoreCase("none"))
+            {
                 // Loop through the split version of the tags string
                 String[] ownedTags = targetDocument.getString("tags").split(":");
 
-                for (String ownedTag : ownedTags) {
+                for (String ownedTag : ownedTags)
+                {
                     Tag tag = Tags.get().getTag(ownedTag);
 
                     if (tag != null)
@@ -165,7 +186,8 @@ public class MongoDataStrategy extends DataStrategy {
     }
 
     @Override
-    public void saveTagData(TagHolder tagHolder) {
+    public void saveTagData(TagHolder tagHolder)
+    {
         // Reconnect if needed
         if (!isAlive())
             connect();
@@ -183,7 +205,8 @@ public class MongoDataStrategy extends DataStrategy {
     }
 
     @Override
-    public void updateTagData(TagHolder tagHolder) {
+    public void updateTagData(TagHolder tagHolder)
+    {
         // Reconnect if needed
         if (!isAlive())
             connect();
@@ -201,7 +224,8 @@ public class MongoDataStrategy extends DataStrategy {
     }
 
     @Override
-    public void deleteTagData(UUID uuid) {
+    public void deleteTagData(UUID uuid)
+    {
         // Reconnect if needed
         if (!isAlive())
             connect();
@@ -210,7 +234,8 @@ public class MongoDataStrategy extends DataStrategy {
     }
 
     @Override
-    public void deleteTagData(TagHolder tagHolder) {
+    public void deleteTagData(TagHolder tagHolder)
+    {
         // Reconnect if needed
         if (!isAlive())
             connect();
@@ -219,7 +244,8 @@ public class MongoDataStrategy extends DataStrategy {
     }
 
     @Override
-    public void dumpData(Player player) {
+    public void dumpData(Player player)
+    {
         // Reconnect if needed
         if (!isAlive())
             connect();
@@ -228,7 +254,8 @@ public class MongoDataStrategy extends DataStrategy {
         player.sendMessage("'tagData' Collection Document Count: " + getCollection("tagData").count());
     }
 
-    private MongoCollection<Document> getCollection(String name) {
+    private MongoCollection<Document> getCollection(String name)
+    {
         return connection.getDatabase(database).getCollection(name);
     }
 

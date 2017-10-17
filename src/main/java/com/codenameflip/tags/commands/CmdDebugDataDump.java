@@ -12,12 +12,14 @@ import org.bukkit.entity.Player;
 
 public class CmdDebugDataDump extends ChildCommand {
 
-    public CmdDebugDataDump(Command parent, String... executors) {
+    public CmdDebugDataDump(Command parent, String... executors)
+    {
         super(parent, executors);
     }
 
     @Override
-    public void execute(Player player, String... strings) {
+    public void execute(Player player, String... strings)
+    {
         Tags.get().getDataStrategy().dumpData(player);
     }
 

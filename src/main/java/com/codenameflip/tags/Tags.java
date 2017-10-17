@@ -30,8 +30,14 @@ public final class Tags extends JavaPlugin {
     private Set<TagHolder> tagHolderSet = Sets.newHashSet();
     private Scoreboard tagScoreboard;
 
+    public static Tags get()
+    {
+        return instance;
+    }
+
     @Override
-    public void onEnable() {
+    public void onEnable()
+    {
         instance = this;
 
         if (!(new File(getDataFolder(), "config.yml")).exists())
@@ -51,7 +57,8 @@ public final class Tags extends JavaPlugin {
         dataStrategy.loadTags();
 
         // If the server has not been populated with proper tag data then register them here.
-        if (tagSet.size() == 0) {
+        if (tagSet.size() == 0)
+        {
             registerDefaultTags();
         }
 
@@ -74,7 +81,8 @@ public final class Tags extends JavaPlugin {
     }
 
     @Override
-    public void onDisable() {
+    public void onDisable()
+    {
         if (dataStrategy.isAlive())
             dataStrategy.disconnect();
 
@@ -84,7 +92,8 @@ public final class Tags extends JavaPlugin {
     /**
      * Registers all default tags in the database
      */
-    private void registerDefaultTags() {
+    private void registerDefaultTags()
+    {
         Tag sun = new Tag("sun", "&6[☼]", false);
         registerTag(sun);
 
@@ -98,23 +107,23 @@ public final class Tags extends JavaPlugin {
         registerTag(heart);
     }
 
-    public static Tags get() {
-        return instance;
-    }
-
-    public DataStrategy getDataStrategy() {
+    public DataStrategy getDataStrategy()
+    {
         return dataStrategy;
     }
 
-    public Set<Tag> getTagSet() {
+    public Set<Tag> getTagSet()
+    {
         return tagSet;
     }
 
     /**
      * Registers a Tag instance to memory
+     *
      * @param tag The Tag instance
      */
-    public void registerTag(Tag tag) {
+    public void registerTag(Tag tag)
+    {
         getTagSet().add(tag);
 
         dataStrategy.saveTag(tag);
@@ -122,15 +131,18 @@ public final class Tags extends JavaPlugin {
         System.out.println("Tags> Registered new tag (" + tag.getIdentifier() + ")...");
     }
 
-    public Set<TagHolder> getTagHolderSet() {
+    public Set<TagHolder> getTagHolderSet()
+    {
         return tagHolderSet;
     }
 
     /**
      * Registers a TagHolder instance to memory
+     *
      * @param tagHolder The TagHolder instance
      */
-    public void registerTagHolder(TagHolder tagHolder) {
+    public void registerTagHolder(TagHolder tagHolder)
+    {
         getTagHolderSet().add(tagHolder);
 
         dataStrategy.saveTagData(tagHolder);
@@ -140,18 +152,22 @@ public final class Tags extends JavaPlugin {
 
     /**
      * Gets the instance of Scoreboard containing all Tag teams
+     *
      * @return The scoreboard
      */
-    public Scoreboard getTagScoreboard() {
+    public Scoreboard getTagScoreboard()
+    {
         return tagScoreboard;
     }
 
     /**
      * Gets a Tag instance referencing the tag's identifier
+     *
      * @param tag The identifier of the desired tag
      * @return The Tag instance (or null)
      */
-    public Tag getTag(String tag) {
+    public Tag getTag(String tag)
+    {
         return getTagSet().stream()
                 .filter(tags -> tags.getIdentifier().equalsIgnoreCase(tag))
                 .findAny()
@@ -160,10 +176,12 @@ public final class Tags extends JavaPlugin {
 
     /**
      * Gets a TagHolder instance referencing the tag holders's uuid
+     *
      * @param uuid The uuid of the desired tag holder
      * @return The TagHolder instance (or null)
      */
-    public TagHolder getTagHolder(UUID uuid) {
+    public TagHolder getTagHolder(UUID uuid)
+    {
         return getTagHolderSet().stream()
                 .filter(tagHolders -> tagHolders.getUuid().equals(uuid))
                 .findAny()

@@ -20,30 +20,35 @@ import org.inventivetalent.menubuilder.inventory.InventoryMenuBuilder;
 
 public class CmdTags extends Command {
 
-    public CmdTags(CommandHandler handler, String permission, String... executors) {
+    public CmdTags(CommandHandler handler, String permission, String... executors)
+    {
         super(handler, permission, executors);
     }
 
     @Override
-    public void execute(Player player, String... strings) {
+    public void execute(Player player, String... strings)
+    {
         player.sendMessage(Tags.TAG + ChatColor.GREEN + "Opening tag selector...");
 
         constructGUI(player).show(player);
     }
 
-    private InventoryMenuBuilder constructGUI(Player player) {
+    private InventoryMenuBuilder constructGUI(Player player)
+    {
         TagHolder tagHolder = Tags.get().getTagHolder(player.getUniqueId());
 
         int size = tagHolder.getTags() != null && tagHolder.getTags().size() > 0 ? ((tagHolder.getTags().size() / 9) + 1) * 9 : 9;
         InventoryMenuBuilder inv = new InventoryMenuBuilder(size, "Select a tag...");
 
-        if (tagHolder.getTags().size() > 0) {
+        if (tagHolder.getTags().size() > 0)
+        {
             // For each tag in the player's storage, add an item to the inventory
-            for (int i = 0; i < tagHolder.getTags().size(); i++) {
+            for (int i = 0; i < tagHolder.getTags().size(); i++)
+            {
                 Tag tag = tagHolder.getTags().get(i);
 
                 ItemStackBuilder itemStackBuilder = new ItemStackBuilder(Material.NAME_TAG)
-                        .withName(tag.getDisplayName() + " " + tag.getIdentifier().toUpperCase()+ " &6&lTag");
+                        .withName(tag.getDisplayName() + " " + tag.getIdentifier().toUpperCase() + " &6&lTag");
 
                 if (tag.isExclusive())
                     itemStackBuilder.withType(Material.DIAMOND).withGlow().withLore("&b&oExclusive Tag");
@@ -59,7 +64,8 @@ public class CmdTags extends Command {
                 itemStackBuilder.withLore("&6&lRight Click &fto &aSelect Tag");
 
                 inv.withItem(i, itemStackBuilder.build(), (clicker, clickType, itemStack) -> {
-                    if (tagHolder.getSelectedTag() != null && tagHolder.getSelectedTag().equals(tag)) {
+                    if (tagHolder.getSelectedTag() != null && tagHolder.getSelectedTag().equals(tag))
+                    {
                         clicker.sendMessage(ChatColor.RED + "You already have this tag selected!");
                         return;
                     }
@@ -78,7 +84,8 @@ public class CmdTags extends Command {
                     .build();
 
             inv.withItem(inv.getInventory().getSize() - 1, resetItem, (clicker, clickType, itemStack) -> {
-                if (tagHolder.getSelectedTag() != null) {
+                if (tagHolder.getSelectedTag() != null)
+                {
                     tagHolder.selectTag(null);
 
                     player.sendMessage(ChatColor.RED + "De-selected all tags.");
@@ -89,17 +96,21 @@ public class CmdTags extends Command {
             }, ClickType.LEFT, ClickType.RIGHT);
 
             return inv;
-        } else {
-            for (int i = 0; i < 9; i++) {inv.withItem(i, new ItemStackBuilder(Material.REDSTONE_BLOCK)
-                            .withName("&c&lYou do not have any tags :(")
-                            .withLore("&7Purchase some tags on the store to fill up this inventory!")
-                            .build(),
-                    (player1, clickType, itemStack) -> {
+        }
+        else
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                inv.withItem(i, new ItemStackBuilder(Material.REDSTONE_BLOCK)
+                                .withName("&c&lYou do not have any tags :(")
+                                .withLore("&7Purchase some tags on the store to fill up this inventory!")
+                                .build(),
+                        (player1, clickType, itemStack) -> {
 
-                player1.closeInventory();
-                inv.dispose();
+                            player1.closeInventory();
+                            inv.dispose();
 
-                }, ClickType.RIGHT, ClickType.LEFT, ClickType.SHIFT_RIGHT, ClickType.SHIFT_LEFT, ClickType.DROP);
+                        }, ClickType.RIGHT, ClickType.LEFT, ClickType.SHIFT_RIGHT, ClickType.SHIFT_LEFT, ClickType.DROP);
             }
 
             return inv;

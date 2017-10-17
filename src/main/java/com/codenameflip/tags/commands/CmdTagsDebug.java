@@ -13,15 +13,18 @@ import org.bukkit.entity.Player;
 
 public class CmdTagsDebug extends Command {
 
-    public CmdTagsDebug(CommandHandler handler, String permission, String... executors) {
+    public CmdTagsDebug(CommandHandler handler, String permission, String... executors)
+    {
         super(handler, permission, executors);
 
         addChild(new CmdDebugDataDump(this, "dumpdata", "datadump"));
     }
 
     @Override
-    public void execute(Player player, String... strings) {
-        if (strings.length < 1) {
+    public void execute(Player player, String... strings)
+    {
+        if (strings.length < 1)
+        {
             Tags.get().getTagSet().forEach(tag -> {
                 debugMessage(player, "&e&l" + tag.getIdentifier());
             });
@@ -34,11 +37,13 @@ public class CmdTagsDebug extends Command {
 
             debugMessage(player, "Data Strategy &a" + Tags.get().getDataStrategy().getIdentifier().toUpperCase());
             debugMessage(player, "Strategy Status " + (Tags.get().getDataStrategy().isAlive() ? "&2&lALIVE" : "&c&lDEAD"));
-        } else
+        }
+        else
             attemptChildCommand(player, strings);
     }
 
-    private void debugMessage(Player player, String message) {
+    private void debugMessage(Player player, String message)
+    {
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cDebug> &f" + message));
     }
 

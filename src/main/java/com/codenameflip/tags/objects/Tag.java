@@ -17,8 +17,10 @@ public class Tag {
     private String identifier;
     private String displayName;
     private boolean exclusive;
+    private Team scoreboardTeam;
 
-    public Tag(String identifier, String displayName, boolean exclusive) {
+    public Tag(String identifier, String displayName, boolean exclusive)
+    {
         this.identifier = identifier;
         this.displayName = displayName;
         this.exclusive = exclusive;
@@ -29,29 +31,33 @@ public class Tag {
         scoreboardTeam.setNameTagVisibility(NameTagVisibility.ALWAYS);
     }
 
-    private Team scoreboardTeam;
-
-    public String getIdentifier() {
+    public String getIdentifier()
+    {
         return identifier;
     }
 
-    public String getDisplayName() {
+    public String getDisplayName()
+    {
         return ChatColor.translateAlternateColorCodes('&', displayName);
     }
 
-    public void setDisplayName(String displayName) {
+    public void setDisplayName(String displayName)
+    {
         this.displayName = displayName;
     }
 
-    public boolean isExclusive() {
+    public boolean isExclusive()
+    {
         return exclusive;
     }
 
-    public void setExclusive(boolean exclusive) {
+    public void setExclusive(boolean exclusive)
+    {
         this.exclusive = exclusive;
     }
 
-    public Team getScoreboardTeam() {
+    public Team getScoreboardTeam()
+    {
         return scoreboardTeam;
     }
 

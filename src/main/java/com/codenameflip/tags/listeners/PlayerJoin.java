@@ -15,7 +15,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class PlayerJoin implements Listener {
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
+    public void onJoin(PlayerJoinEvent event)
+    {
         Player player = event.getPlayer();
 
         Bukkit.getOnlinePlayers().forEach(online -> {
@@ -23,7 +24,8 @@ public class PlayerJoin implements Listener {
         });
 
         // Check and see if the player is cached already
-        if (Tags.get().getTagHolder(player.getUniqueId()) == null) {
+        if (Tags.get().getTagHolder(player.getUniqueId()) == null)
+        {
 
             // Load the TagHolder data for the player
             Tags.get().getDataStrategy().loadTagData(player.getUniqueId());

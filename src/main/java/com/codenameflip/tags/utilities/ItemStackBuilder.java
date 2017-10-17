@@ -21,30 +21,36 @@ public class ItemStackBuilder {
 
     private final ItemStack ITEM_STACK;
 
-    public ItemStackBuilder(Material mat) {
+    public ItemStackBuilder(Material mat)
+    {
         this.ITEM_STACK = new ItemStack(mat);
     }
 
-    public ItemStackBuilder(ItemStack item) {
+    public ItemStackBuilder(ItemStack item)
+    {
         this.ITEM_STACK = item;
     }
 
-    public ItemStackBuilder withAmount(int amount) {
+    public ItemStackBuilder withAmount(int amount)
+    {
         ITEM_STACK.setAmount(amount);
         return this;
     }
 
-    public ItemStackBuilder withName(String name) {
+    public ItemStackBuilder withName(String name)
+    {
         final ItemMeta meta = ITEM_STACK.getItemMeta();
         meta.setDisplayName(color(name));
         ITEM_STACK.setItemMeta(meta);
         return this;
     }
 
-    public ItemStackBuilder withLore(String name) {
+    public ItemStackBuilder withLore(String name)
+    {
         final ItemMeta meta = ITEM_STACK.getItemMeta();
         List<String> lore = meta.getLore();
-        if (lore == null) {
+        if (lore == null)
+        {
             lore = new ArrayList<>();
         }
         lore.add(color(name));
@@ -53,58 +59,71 @@ public class ItemStackBuilder {
         return this;
     }
 
-    public ItemStackBuilder withDurability(int durability) {
+    public ItemStackBuilder withDurability(int durability)
+    {
         ITEM_STACK.setDurability((short) durability);
         return this;
     }
 
-    public ItemStackBuilder withData(int data) {
+    public ItemStackBuilder withData(int data)
+    {
         ITEM_STACK.setDurability((short) data);
         return this;
     }
 
-    public ItemStackBuilder withEnchantment(Enchantment enchantment, final int level) {
+    public ItemStackBuilder withEnchantment(Enchantment enchantment, final int level)
+    {
         ITEM_STACK.addUnsafeEnchantment(enchantment, level);
         return this;
     }
 
-    public ItemStackBuilder withEnchantment(Enchantment enchantment) {
+    public ItemStackBuilder withEnchantment(Enchantment enchantment)
+    {
         ITEM_STACK.addUnsafeEnchantment(enchantment, 1);
         return this;
     }
 
-    public ItemStackBuilder withType(Material material) {
+    public ItemStackBuilder withType(Material material)
+    {
         ITEM_STACK.setType(material);
         return this;
     }
 
-    public ItemStackBuilder clearLore() {
+    public ItemStackBuilder clearLore()
+    {
         final ItemMeta meta = ITEM_STACK.getItemMeta();
         meta.setLore(new ArrayList<String>());
         ITEM_STACK.setItemMeta(meta);
         return this;
     }
 
-    public ItemStackBuilder clearEnchantments() {
-        for (Enchantment enchantment : ITEM_STACK.getEnchantments().keySet()) {
+    public ItemStackBuilder clearEnchantments()
+    {
+        for (Enchantment enchantment : ITEM_STACK.getEnchantments().keySet())
+        {
             ITEM_STACK.removeEnchantment(enchantment);
         }
         return this;
     }
 
-    public ItemStackBuilder withColor(Color color) {
+    public ItemStackBuilder withColor(Color color)
+    {
         Material type = ITEM_STACK.getType();
-        if (type == Material.LEATHER_BOOTS || type == Material.LEATHER_CHESTPLATE || type == Material.LEATHER_HELMET || type == Material.LEATHER_LEGGINGS) {
+        if (type == Material.LEATHER_BOOTS || type == Material.LEATHER_CHESTPLATE || type == Material.LEATHER_HELMET || type == Material.LEATHER_LEGGINGS)
+        {
             LeatherArmorMeta meta = (LeatherArmorMeta) ITEM_STACK.getItemMeta();
             meta.setColor(color);
             ITEM_STACK.setItemMeta(meta);
             return this;
-        } else {
+        }
+        else
+        {
             throw new IllegalArgumentException("withColor is only applicable for leather armor!");
         }
     }
 
-    public ItemStackBuilder withGlow() {
+    public ItemStackBuilder withGlow()
+    {
         ItemMeta meta = ITEM_STACK.getItemMeta();
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         ITEM_STACK.setItemMeta(meta);
@@ -114,11 +133,13 @@ public class ItemStackBuilder {
         return this;
     }
 
-    public ItemStack build() {
+    public ItemStack build()
+    {
         return ITEM_STACK;
     }
 
-    private String color(String message) {
+    private String color(String message)
+    {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
